@@ -38,6 +38,7 @@ ExportedObj/
 *.csproj
 *.unityproj
 *.sln
+*.slnx
 *.suo
 *.tmp
 *.user
@@ -159,13 +160,14 @@ ScaffoldingReadMe.txt
 
 # StyleCop
 StyleCopReport.xml
+.agent/
 
 # Files built by Visual Studio
 *_i.c
 *_p.c
 *_h.h
 *.ilk
-*.meta
+# *.meta # DISABLED — Unity .meta files MUST be tracked in Git!
 *.obj
 *.iobj
 *.pch
@@ -480,3 +482,6 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/unity,visualstudio,visualstudiocode
+.vscode
+notes
+
