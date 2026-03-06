@@ -18,8 +18,14 @@ public class PlayerController : MonoBehaviour
     public float groundCheckRadius = 0.2f;
     public LayerMask groundLayer;
 
+    private PlayerAnimations _animations;
     private float moveInput;
     private bool isGrounded;
+
+    private void Start()
+    {
+        _animations = GetComponent<PlayerAnimations>();
+    }
 
     private void OnEnable()
     {
@@ -36,25 +42,42 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         moveInput = moveAction.ReadValue<float>();
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
-        // Flip character based on movement direction
+        HandleFlip();
+        HandleJump();
+        UpdateAnimations();
+    }
+
+    private void FixedUpdate()
+    {
+        HandleMovement();
+    }
+    private void HandleMovement()
+    {
+        rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
+    }
+    private void HandleJump()
+    {
+        if (jumpAction.WasPressedThisFrame() && isGrounded)
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+        }
+    }
+    private void HandleFlip()
+    {
         if (moveInput != 0f)
         {
             Vector3 scale = transform.localScale;
             scale.x = Mathf.Abs(scale.x) * Mathf.Sign(moveInput);
             transform.localScale = scale;
         }
-
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-
-        if (jumpAction.WasPressedThisFrame() && isGrounded)
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-        }
     }
-
-    private void FixedUpdate()
+    private void UpdateAnimations()
     {
-        rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
+        if (_animations != null)
+        {
+            _animations.isMoving = moveInput != 0;
+        }
     }
 }

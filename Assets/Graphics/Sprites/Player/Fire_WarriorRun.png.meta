@@ -1,31 +1,31 @@
 fileFormatVersion: 2
-guid: bc1e9e28ce82d2145a8f03446697d73b
+guid: f9169e00d9ca8a2429dfbcde088f089d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5296555767818526437
-    second: Fire_WarriorIdle_0
+      213: 8620441816999443727
+    second: Fire_WarriorRun_0
   - first:
-      213: -8462161318698121764
-    second: Fire_WarriorIdle_1
+      213: -5852517897997107495
+    second: Fire_WarriorRun_1
   - first:
-      213: -4854555114847267770
-    second: Fire_WarriorIdle_2
+      213: 5577561119392635050
+    second: Fire_WarriorRun_2
   - first:
-      213: 2665862987858058454
-    second: Fire_WarriorIdle_3
+      213: 1996169985876597193
+    second: Fire_WarriorRun_3
   - first:
-      213: -7419472474624107056
-    second: Fire_WarriorIdle_4
+      213: 1689742655356397643
+    second: Fire_WarriorRun_4
   - first:
-      213: 560730608615453070
-    second: Fire_WarriorIdle_5
+      213: 2630543449219525100
+    second: Fire_WarriorRun_5
   - first:
-      213: -1827391772458822727
-    second: Fire_WarriorIdle_6
+      213: 61789631945277448
+    second: Fire_WarriorRun_6
   - first:
-      213: 3696218908798637452
-    second: Fire_WarriorIdle_7
+      213: -748193811219636371
+    second: Fire_WarriorRun_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -134,13 +134,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Fire_WarriorIdle_0
+      name: Fire_WarriorRun_0
       rect:
         serializedVersion: 2
-        x: 41
+        x: 35
         y: 15
-        width: 29
-        height: 49
+        width: 41
+        height: 45
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -149,20 +149,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5ee9ed19865218940800000000000000
-      internalID: 5296555767818526437
+      spriteID: f0dbc25d826f1a770800000000000000
+      internalID: 8620441816999443727
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Fire_WarriorIdle_1
+      name: Fire_WarriorRun_1
       rect:
         serializedVersion: 2
-        x: 185
+        x: 179
         y: 15
-        width: 29
-        height: 48
+        width: 40
+        height: 44
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -171,20 +171,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cd582f67d1d509a80800000000000000
-      internalID: -8462161318698121764
+      spriteID: 9de3440dafda7cea0800000000000000
+      internalID: -5852517897997107495
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Fire_WarriorIdle_2
+      name: Fire_WarriorRun_2
       rect:
         serializedVersion: 2
-        x: 329
+        x: 325
         y: 15
-        width: 29
-        height: 48
+        width: 37
+        height: 44
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -193,20 +193,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 64419f4f7d721acb0800000000000000
-      internalID: -4854555114847267770
+      spriteID: aa89d62794a776d40800000000000000
+      internalID: 5577561119392635050
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Fire_WarriorIdle_3
+      name: Fire_WarriorRun_3
       rect:
         serializedVersion: 2
-        x: 472
+        x: 466
         y: 15
-        width: 30
-        height: 47
+        width: 39
+        height: 45
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -215,20 +215,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6dc142b534c0ff420800000000000000
-      internalID: 2665862987858058454
+      spriteID: 9c99877a602d3bb10800000000000000
+      internalID: 1996169985876597193
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Fire_WarriorIdle_4
+      name: Fire_WarriorRun_4
       rect:
         serializedVersion: 2
-        x: 616
+        x: 609
         y: 15
-        width: 30
-        height: 47
+        width: 39
+        height: 45
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -237,20 +237,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0dddd39281db80990800000000000000
-      internalID: -7419472474624107056
+      spriteID: b48e75e0efb237710800000000000000
+      internalID: 1689742655356397643
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Fire_WarriorIdle_5
+      name: Fire_WarriorRun_5
       rect:
         serializedVersion: 2
-        x: 760
+        x: 754
         y: 15
-        width: 30
-        height: 48
+        width: 39
+        height: 44
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -259,20 +259,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e817635848d18c700800000000000000
-      internalID: 560730608615453070
+      spriteID: ce9e5f07451918420800000000000000
+      internalID: 2630543449219525100
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Fire_WarriorIdle_6
+      name: Fire_WarriorRun_6
       rect:
         serializedVersion: 2
-        x: 905
+        x: 901
         y: 15
-        width: 29
-        height: 48
+        width: 37
+        height: 44
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -281,20 +281,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9b3de196ddcc3a6e0800000000000000
-      internalID: -1827391772458822727
+      spriteID: 80086e6c7558bd000800000000000000
+      internalID: 61789631945277448
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Fire_WarriorIdle_7
+      name: Fire_WarriorRun_7
       rect:
         serializedVersion: 2
-        x: 1049
+        x: 1043
         y: 15
-        width: 29
-        height: 49
+        width: 40
+        height: 45
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -303,8 +303,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c85560f938b9b4330800000000000000
-      internalID: 3696218908798637452
+      spriteID: d6f9b1b51b1ed95f0800000000000000
+      internalID: -748193811219636371
       vertices: []
       indices: 
       edges: []
@@ -323,14 +323,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Fire_WarriorIdle_0: 5296555767818526437
-      Fire_WarriorIdle_1: -8462161318698121764
-      Fire_WarriorIdle_2: -4854555114847267770
-      Fire_WarriorIdle_3: 2665862987858058454
-      Fire_WarriorIdle_4: -7419472474624107056
-      Fire_WarriorIdle_5: 560730608615453070
-      Fire_WarriorIdle_6: -1827391772458822727
-      Fire_WarriorIdle_7: 3696218908798637452
+      Fire_WarriorRun_0: 8620441816999443727
+      Fire_WarriorRun_1: -5852517897997107495
+      Fire_WarriorRun_2: 5577561119392635050
+      Fire_WarriorRun_3: 1996169985876597193
+      Fire_WarriorRun_4: 1689742655356397643
+      Fire_WarriorRun_5: 2630543449219525100
+      Fire_WarriorRun_6: 61789631945277448
+      Fire_WarriorRun_7: -748193811219636371
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
