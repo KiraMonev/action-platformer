@@ -1,20 +1,14 @@
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    public float health;
-    public int numOfHearts;
+    [Header("Здоровье и настройка сердец")]
+    [SerializeField] private float health = 3.0f;
+    [SerializeField] private int numOfHearts = 3;
     public Image[] hearts;
     public Sprite fullHeart;
-    public Sprite emptyHeart;
-    void Start()
-    {
-        
-    }
-
+    public Sprite emptyHeart; 
     private void FixedUpdate()
     {
         if(health > numOfHearts)
