@@ -682,11 +682,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 1
   windowsGamepadBackendHint: 0
-  cloudProjectId: e26a789c-c455-4bfd-abc6-c2cf6560bc6b
+  cloudProjectId: 693f969a-152f-4b54-8ac0-c6466c43374a
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
   projectName: actionPlatformer
-  organizationId: kmonyov
+  organizationId: semyontechguru
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
