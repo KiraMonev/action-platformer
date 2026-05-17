@@ -94,6 +94,8 @@ public class PlayerController : MonoBehaviour
         if (_animations != null)
         {
             _animations.isMoving = moveInput != 0;
+            _animations.isGrounded = _groundDetector.IsGrounded;
+            _animations.yVelocity = rb.linearVelocity.y;
         }
     }
 }

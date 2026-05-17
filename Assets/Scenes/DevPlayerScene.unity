@@ -945,12 +945,29 @@ PrefabInstance:
       propertyPath: attackAction.m_SingletonActionBindings.Array.data[0].m_Action
       value: Attack
       objectReference: {fileID: 0}
+    - target: {fileID: 7523663487746463820, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7694405182686894579, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
+      propertyPath: m_Size.y
+      value: 1.8639351
+      objectReference: {fileID: 0}
+    - target: {fileID: 7694405182686894579, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.9697606
+      objectReference: {fileID: 0}
     - target: {fileID: 8217454233225078959, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 8653567756060056456, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
+      propertyPath: groundLayer.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 7523663487746463820, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
