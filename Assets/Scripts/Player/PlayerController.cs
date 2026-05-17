@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     [Header("Input")]
     public InputAction moveAction;
     public InputAction jumpAction;
+    public InputAction attackAction;
 
     [Header("Jump")]
     public float jumpForce = 12f;
@@ -31,12 +32,14 @@ public class PlayerController : MonoBehaviour
     {
         moveAction.Enable();
         jumpAction.Enable();
+        attackAction.Enable();
     }
 
     private void OnDisable()
     {
         moveAction.Disable();
         jumpAction.Disable();
+        attackAction.Disable();
     }
 
     void Update()
@@ -46,6 +49,7 @@ public class PlayerController : MonoBehaviour
 
         HandleFlip();
         HandleJump();
+        HandleAttack();
         UpdateAnimations();
     }
 
@@ -62,6 +66,16 @@ public class PlayerController : MonoBehaviour
         if (jumpAction.WasPressedThisFrame() && isGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+        }
+    }
+    private void HandleAttack()
+    {
+        if (attackAction.WasPressedThisFrame())
+        {
+            if (_animations != null)
+            {
+                _animations.PlayAttack();
+            }
         }
     }
     private void HandleFlip()
