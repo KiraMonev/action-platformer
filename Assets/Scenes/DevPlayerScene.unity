@@ -417,6 +417,7 @@ GameObject:
   - component: {fileID: 893239808}
   - component: {fileID: 893239807}
   - component: {fileID: 893239806}
+  - component: {fileID: 893239809}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -498,6 +499,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &893239809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 893239805}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe50ad92d2fddf2419911a50af6e70f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraController
+  target: {fileID: 0}
+  smoothTimeX: 0.15
+  smoothTimeY: 0.25
+  targetOffset: {x: 0, y: 1.5}
+  useLookahead: 1
+  lookaheadDistance: 2
+  lookaheadSpeed: 3
+  useBounds: 0
+  minBounds: {x: 0, y: 0}
+  maxBounds: {x: 0, y: 0}
 --- !u!1 &1080966081
 GameObject:
   m_ObjectHideFlags: 0

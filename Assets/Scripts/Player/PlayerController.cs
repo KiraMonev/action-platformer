@@ -24,6 +24,19 @@ public class PlayerController : MonoBehaviour
     {
         _animations = GetComponent<PlayerAnimations>();
         _groundDetector = GetComponent<GroundDetector>();
+        EnsureCameraFollow();
+    }
+
+    private void EnsureCameraFollow()
+    {
+        Camera mainCam = Camera.main;
+        if (mainCam != null)
+        {
+            if (mainCam.GetComponent<CameraController>() == null)
+            {
+                mainCam.gameObject.AddComponent<CameraController>();
+            }
+        }
     }
 
     private void OnEnable()
@@ -75,6 +88,13 @@ public class PlayerController : MonoBehaviour
             if (_animations != null)
             {
                 _animations.PlayAttack();
+            }
+
+            // Легкая отдача/тряска экрана для сочности атаки
+            CameraController cam = Camera.main?.GetComponent<CameraController>();
+            if (cam != null)
+            {
+                cam.Shake(0.12f, 0.15f);
             }
         }
     }
