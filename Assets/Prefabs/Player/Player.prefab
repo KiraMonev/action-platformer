@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 5620360001281145449}
   - component: {fileID: 5892731995729746085}
   - component: {fileID: 4863803927306577811}
+  - component: {fileID: 8653567756060056456}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -190,7 +191,7 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.06999999, y: -0.0091359615}
+  m_Offset: {x: 0.06999999, y: 0.9508641}
   m_Size: {x: 0.6, y: 1.9017282}
   m_Direction: 0
 --- !u!114 &6495359056574188048
@@ -257,12 +258,16 @@ MonoBehaviour:
       m_Action: Jump
       m_Flags: 0
     m_Flags: 0
+  attackAction:
+    m_Name: Attack
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 7cb87073-88ea-4fb9-9eba-48c7624a9361
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
   jumpForce: 6
-  groundCheck: {fileID: 4785704307809187287}
-  groundCheckRadius: 0.2
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!114 &5620360001281145449
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -317,3 +322,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68fa5305383c9434fb5bc5ad214d7840, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimations
+--- !u!114 &8653567756060056456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8217454233225078959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 234ed9b6e3897f645b2ecfe3d128fe75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GroundDetector
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  checkDistance: 0.05
+  checkWidthPercent: 0.9

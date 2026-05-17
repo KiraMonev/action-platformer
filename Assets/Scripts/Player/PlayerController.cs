@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(GroundDetector))]
 public class PlayerController : MonoBehaviour
 {
     public Rigidbody2D rb;
@@ -14,18 +16,14 @@ public class PlayerController : MonoBehaviour
     [Header("Jump")]
     public float jumpForce = 12f;
 
-    [Header("Ground Check")]
-    public Transform groundCheck;
-    public float groundCheckRadius = 0.2f;
-    public LayerMask groundLayer;
-
     private PlayerAnimations _animations;
+    private GroundDetector _groundDetector;
     private float moveInput;
-    private bool isGrounded;
 
     private void Start()
     {
         _animations = GetComponent<PlayerAnimations>();
+        _groundDetector = GetComponent<GroundDetector>();
     }
 
     private void OnEnable()
@@ -45,7 +43,6 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         moveInput = moveAction.ReadValue<float>();
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
         HandleFlip();
         HandleJump();
@@ -57,17 +54,20 @@ public class PlayerController : MonoBehaviour
     {
         HandleMovement();
     }
+
     private void HandleMovement()
     {
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
     }
+
     private void HandleJump()
     {
-        if (jumpAction.WasPressedThisFrame() && isGrounded)
+        if (jumpAction.WasPressedThisFrame() && _groundDetector.IsGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
     }
+
     private void HandleAttack()
     {
         if (attackAction.WasPressedThisFrame())
@@ -78,6 +78,7 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
     private void HandleFlip()
     {
         if (moveInput != 0f)
@@ -87,6 +88,7 @@ public class PlayerController : MonoBehaviour
             transform.localScale = scale;
         }
     }
+
     private void UpdateAnimations()
     {
         if (_animations != null)
