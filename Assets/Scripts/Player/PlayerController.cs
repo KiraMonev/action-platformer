@@ -16,6 +16,11 @@ public class PlayerController : MonoBehaviour
     [Header("Jump")]
     public float jumpForce = 12f;
 
+    [Header("Audio Settings")]
+    [SerializeField] private float footstepInterval = 0.35f;
+    private float _footstepTimer;
+    private bool _wasGrounded;
+
     private PlayerAnimations _animations;
     private GroundDetector _groundDetector;
     private float moveInput;
@@ -24,6 +29,7 @@ public class PlayerController : MonoBehaviour
     {
         _animations = GetComponent<PlayerAnimations>();
         _groundDetector = GetComponent<GroundDetector>();
+        _wasGrounded = _groundDetector.IsGrounded;
         EnsureCameraFollow();
     }
 
@@ -57,10 +63,45 @@ public class PlayerController : MonoBehaviour
     {
         moveInput = moveAction.ReadValue<float>();
 
+        HandleLanding();
+        HandleFootsteps();
         HandleFlip();
         HandleJump();
         HandleAttack();
         UpdateAnimations();
+    }
+
+    private void HandleLanding()
+    {
+        bool isGrounded = _groundDetector.IsGrounded;
+        if (isGrounded && !_wasGrounded && rb.linearVelocity.y <= 0.1f)
+        {
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.Play(SoundType.Land);
+            }
+        }
+        _wasGrounded = isGrounded;
+    }
+
+    private void HandleFootsteps()
+    {
+        if (_groundDetector.IsGrounded && moveInput != 0f)
+        {
+            _footstepTimer -= Time.deltaTime;
+            if (_footstepTimer <= 0f)
+            {
+                if (AudioManager.Instance != null)
+                {
+                    AudioManager.Instance.Play(SoundType.Run);
+                }
+                _footstepTimer = footstepInterval;
+            }
+        }
+        else
+        {
+            _footstepTimer = 0f; // Сразу проиграть шаг при начале бега
+        }
     }
 
     private void FixedUpdate()
@@ -78,6 +119,10 @@ public class PlayerController : MonoBehaviour
         if (jumpAction.WasPressedThisFrame() && _groundDetector.IsGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.Play(SoundType.Jump);
+            }
         }
     }
 
@@ -88,6 +133,11 @@ public class PlayerController : MonoBehaviour
             if (_animations != null)
             {
                 _animations.PlayAttack();
+            }
+
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.Play(SoundType.SwordAttack);
             }
 
             // Легкая отдача/тряска экрана для сочности атаки

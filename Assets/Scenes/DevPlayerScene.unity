@@ -119,6 +119,84 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &33706045
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 33706047}
+  - component: {fileID: 33706046}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &33706046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 33706045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4cc964452e2ee64f98bd7c2898c9a20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  soundEffects:
+  - type: 0
+    clip: {fileID: 8300000, guid: 7a15fdba4a27ecd4eb50dc663770bfcf, type: 3}
+    volume: 1
+    pitch: 1
+    useRandomPitch: 1
+    pitchVariation: 0.05
+    applyLowPass: 0
+    lowPassCutoff: 0
+  - type: 1
+    clip: {fileID: 8300000, guid: 78793a7fba494ba419126464c112c5e6, type: 3}
+    volume: 0.9
+    pitch: 1
+    useRandomPitch: 1
+    pitchVariation: 0.06
+    applyLowPass: 0
+    lowPassCutoff: 0
+  - type: 2
+    clip: {fileID: 8300000, guid: fce4a9ccf97bdbb458b20ba406152a8a, type: 3}
+    volume: 0.9
+    pitch: 1
+    useRandomPitch: 1
+    pitchVariation: 0.04
+    applyLowPass: 0
+    lowPassCutoff: 0
+  - type: 3
+    clip: {fileID: 8300000, guid: 1247dfe9efabf724f93422a63197c35f, type: 3}
+    volume: 1
+    pitch: 0.9
+    useRandomPitch: 1
+    pitchVariation: 0.04
+    applyLowPass: 0
+    lowPassCutoff: 0
+  poolSize: 10
+--- !u!4 &33706047
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 33706045}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &694596448
 GameObject:
   m_ObjectHideFlags: 0
@@ -1005,3 +1083,4 @@ SceneRoots:
   - {fileID: 1727435962}
   - {fileID: 1080966084}
   - {fileID: 694596451}
+  - {fileID: 33706047}
