@@ -42,6 +42,11 @@ public class Fireball : MonoBehaviour
 
         if (collision.CompareTag("Player")) return;
 
+        if (collision.TryGetComponent<IDamageable>(out var damageable))
+        {
+            damageable.TakeDamage(3);
+        }
+
         Explode();
     }
 

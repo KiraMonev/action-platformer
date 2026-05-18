@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour
     private float moveInput;
     private bool _isCasting;
     private bool _isGroundedCast;
+    private float _knockbackTimer;
 
     private void Start()
     {
@@ -70,11 +71,16 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (_knockbackTimer > 0f)
+        {
+            _knockbackTimer -= Time.deltaTime;
+        }
+
         if (_isCasting && _isGroundedCast)
         {
             moveInput = 0f;
         }
-        else
+        else if (_knockbackTimer <= 0f)
         {
             moveInput = moveAction.ReadValue<float>();
         }
@@ -103,7 +109,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleFootsteps()
     {
-        if (_groundDetector.IsGrounded && moveInput != 0f)
+        if (_groundDetector.IsGrounded && moveInput != 0f && _knockbackTimer <= 0f)
         {
             _footstepTimer -= Time.deltaTime;
             if (_footstepTimer <= 0f)
@@ -117,7 +123,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            _footstepTimer = 0f; // Сразу проиграть шаг при начале бега
+            _footstepTimer = 0f;
         }
     }
 
@@ -128,6 +134,8 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMovement()
     {
+        if (_knockbackTimer > 0f) return;
+
         if (_isCasting && _isGroundedCast)
         {
             rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
@@ -138,7 +146,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleJump()
     {
-        if (_isCasting && _isGroundedCast) return;
+        if (_knockbackTimer > 0f || (_isCasting && _isGroundedCast)) return;
 
         if (jumpAction.WasPressedThisFrame() && _groundDetector.IsGrounded)
         {
@@ -152,7 +160,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleAttack()
     {
-        if (_isCasting && _isGroundedCast) return;
+        if (_knockbackTimer > 0f || (_isCasting && _isGroundedCast)) return;
 
         if (attackAction.WasPressedThisFrame())
         {
@@ -166,17 +174,30 @@ public class PlayerController : MonoBehaviour
                 AudioManager.Instance.Play(SoundType.SwordAttack);
             }
 
-            // Легкая отдача/тряска экрана для сочности атаки
             CameraController cam = Camera.main?.GetComponent<CameraController>();
             if (cam != null)
             {
                 cam.Shake(0.12f, 0.15f);
+            }
+
+            Vector2 attackCenter = (Vector2)transform.position + new Vector2(Mathf.Sign(transform.localScale.x) * 1.1f, 0f);
+            Vector2 attackSize = new Vector2(1.8f, 2.2f);
+            Collider2D[] hits = Physics2D.OverlapBoxAll(attackCenter, attackSize, 0f);
+            foreach (var hit in hits)
+            {
+                if (hit.gameObject == gameObject) continue;
+                if (hit.TryGetComponent<IDamageable>(out var damageable))
+                {
+                    damageable.TakeDamage(1);
+                }
             }
         }
     }
 
     private void HandleFlip()
     {
+        if (_knockbackTimer > 0f) return;
+
         if (moveInput != 0f)
         {
             Vector3 scale = transform.localScale;
@@ -189,7 +210,7 @@ public class PlayerController : MonoBehaviour
     {
         if (_animations != null)
         {
-            _animations.isMoving = moveInput != 0;
+            _animations.isMoving = moveInput != 0 && _knockbackTimer <= 0f;
             _animations.isGrounded = _groundDetector.IsGrounded;
             _animations.yVelocity = rb.linearVelocity.y;
         }
@@ -197,7 +218,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleFireball()
     {
-        if (_isCasting) return;
+        if (_knockbackTimer > 0f || _isCasting) return;
 
         if (fireballAction.WasPressedThisFrame())
         {
@@ -236,5 +257,13 @@ public class PlayerController : MonoBehaviour
     public void EndCast()
     {
         _isCasting = false;
+    }
+
+    public void ApplyKnockback(Vector2 force, float duration = 0.25f)
+    {
+        _knockbackTimer = duration;
+        _isCasting = false;
+        rb.linearVelocity = Vector2.zero;
+        rb.AddForce(force, ForceMode2D.Impulse);
     }
 }
