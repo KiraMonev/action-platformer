@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,9 @@ public class Player : MonoBehaviour, IDamageable
     public Sprite fullHeart;
     public Sprite emptyHeart; 
 
+    public event Action OnDeath;
+    private bool _isDead;
+
     private float _invulnTimer;
     private SpriteRenderer _sr;
 
@@ -20,6 +24,8 @@ public class Player : MonoBehaviour, IDamageable
 
     private void Update()
     {
+        if (_isDead) return;
+
         if (_invulnTimer > 0f)
         {
             _invulnTimer -= Time.deltaTime;
@@ -67,9 +73,24 @@ public class Player : MonoBehaviour, IDamageable
 
     public void TakeDamage(int damage)
     {
-        if (health <= 0 || _invulnTimer > 0f) return;
+        if (health <= 0 || _invulnTimer > 0f || _isDead) return;
 
         health -= damage;
+
+        if (health <= 0 && !_isDead)
+        {
+            _isDead = true;
+            _invulnTimer = 0f;
+            if (_sr != null)
+            {
+                Color c = _sr.color;
+                c.a = 1f;
+                _sr.color = c;
+            }
+            OnDeath?.Invoke();
+            return;
+        }
+
         _invulnTimer = 1.2f;
 
         if (TryGetComponent<PlayerController>(out var controller))
@@ -84,5 +105,10 @@ public class Player : MonoBehaviour, IDamageable
         {
             cam.Shake(0.2f, 0.25f);
         }
+    }
+
+    public void OnDeathAnimationComplete()
+    {
+        Time.timeScale = 0f;
     }
 }

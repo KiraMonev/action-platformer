@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
     private bool _isCasting;
     private bool _isGroundedCast;
     private float _knockbackTimer;
+    private bool _isDead;
 
     private void Start()
     {
@@ -59,6 +60,11 @@ public class PlayerController : MonoBehaviour
         jumpAction.Enable();
         attackAction.Enable();
         fireballAction.Enable();
+
+        if (TryGetComponent<Player>(out var player))
+        {
+            player.OnDeath += HandleDeath;
+        }
     }
 
     private void OnDisable()
@@ -67,10 +73,26 @@ public class PlayerController : MonoBehaviour
         jumpAction.Disable();
         attackAction.Disable();
         fireballAction.Disable();
+
+        if (TryGetComponent<Player>(out var player))
+        {
+            player.OnDeath -= HandleDeath;
+        }
+    }
+
+    private void HandleDeath()
+    {
+        _isDead = true;
+        moveInput = 0f;
+        rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+        gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+        OnDisable();
     }
 
     void Update()
     {
+        if (_isDead) return;
+
         if (_knockbackTimer > 0f)
         {
             _knockbackTimer -= Time.deltaTime;
@@ -129,6 +151,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (_isDead) return;
         HandleMovement();
     }
 
@@ -233,6 +256,8 @@ public class PlayerController : MonoBehaviour
 
     public void SpawnFireball()
     {
+        if (_isDead) return;
+
         if (fireballPrefab == null || fireballSpawnPoint == null)
         {
             Debug.LogWarning("[PlayerController] fireballPrefab or fireballSpawnPoint is not assigned!");
@@ -261,6 +286,8 @@ public class PlayerController : MonoBehaviour
 
     public void ApplyKnockback(Vector2 force, float duration = 0.25f)
     {
+        if (_isDead) return;
+
         _knockbackTimer = duration;
         _isCasting = false;
         rb.linearVelocity = Vector2.zero;

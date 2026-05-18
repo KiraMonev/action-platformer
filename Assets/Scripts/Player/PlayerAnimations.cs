@@ -8,13 +8,38 @@ public class PlayerAnimations : MonoBehaviour
     public bool isGrounded { private get; set; }
     public float yVelocity { private get; set; }
 
-    private void Start()
+    private void Awake()
     {
         _animator = GetComponent<Animator>();
     }
 
+    private void OnEnable()
+    {
+        if (TryGetComponent<Player>(out var player))
+        {
+            player.OnDeath += HandleDeath;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (TryGetComponent<Player>(out var player))
+        {
+            player.OnDeath -= HandleDeath;
+        }
+    }
+
+    private void HandleDeath()
+    {
+        if (_animator != null)
+        {
+            _animator.SetTrigger("Die");
+        }
+    }
+
     private void FixedUpdate()
     {
+        if (_animator == null) return;
         _animator.SetBool("isMoving", isMoving);
         _animator.SetBool("isGrounded", isGrounded);
         _animator.SetFloat("yVelocity", yVelocity);
@@ -22,11 +47,11 @@ public class PlayerAnimations : MonoBehaviour
 
     public void PlayAttack()
     {
-        _animator.SetTrigger("attack");
+        if (_animator != null) _animator.SetTrigger("attack");
     }
 
     public void PlayCast()
     {
-        _animator.SetTrigger("cast");
+        if (_animator != null) _animator.SetTrigger("cast");
     }
 }
