@@ -1018,6 +1018,10 @@ PrefabInstance:
       propertyPath: 'hearts.Array.data[2]'
       value: 
       objectReference: {fileID: 1475707967}
+    - target: {fileID: 6103807452932570355, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}
     - target: {fileID: 6495359056574188048, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
       propertyPath: attackAction.m_Name
       value: Attack
@@ -1045,6 +1049,10 @@ PrefabInstance:
     - target: {fileID: 6495359056574188048, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
       propertyPath: attackAction.m_SingletonActionBindings.Array.data[0].m_Action
       value: Attack
+      objectReference: {fileID: 0}
+    - target: {fileID: 6593702632822980506, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.71
       objectReference: {fileID: 0}
     - target: {fileID: 7523663487746463820, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
       propertyPath: m_IsActive

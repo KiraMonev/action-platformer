@@ -12,9 +12,14 @@ public class PlayerController : MonoBehaviour
     public InputAction moveAction;
     public InputAction jumpAction;
     public InputAction attackAction;
+    public InputAction fireballAction;
 
     [Header("Jump")]
     public float jumpForce = 12f;
+
+    [Header("Fireball Attack")]
+    public GameObject fireballPrefab;
+    public Transform fireballSpawnPoint;
 
     [Header("Audio Settings")]
     [SerializeField] private float footstepInterval = 0.35f;
@@ -24,6 +29,8 @@ public class PlayerController : MonoBehaviour
     private PlayerAnimations _animations;
     private GroundDetector _groundDetector;
     private float moveInput;
+    private bool _isCasting;
+    private bool _isGroundedCast;
 
     private void Start()
     {
@@ -50,6 +57,7 @@ public class PlayerController : MonoBehaviour
         moveAction.Enable();
         jumpAction.Enable();
         attackAction.Enable();
+        fireballAction.Enable();
     }
 
     private void OnDisable()
@@ -57,17 +65,26 @@ public class PlayerController : MonoBehaviour
         moveAction.Disable();
         jumpAction.Disable();
         attackAction.Disable();
+        fireballAction.Disable();
     }
 
     void Update()
     {
-        moveInput = moveAction.ReadValue<float>();
+        if (_isCasting && _isGroundedCast)
+        {
+            moveInput = 0f;
+        }
+        else
+        {
+            moveInput = moveAction.ReadValue<float>();
+        }
 
         HandleLanding();
         HandleFootsteps();
         HandleFlip();
         HandleJump();
         HandleAttack();
+        HandleFireball();
         UpdateAnimations();
     }
 
@@ -111,11 +128,18 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMovement()
     {
+        if (_isCasting && _isGroundedCast)
+        {
+            rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+            return;
+        }
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
     }
 
     private void HandleJump()
     {
+        if (_isCasting && _isGroundedCast) return;
+
         if (jumpAction.WasPressedThisFrame() && _groundDetector.IsGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
@@ -128,6 +152,8 @@ public class PlayerController : MonoBehaviour
 
     private void HandleAttack()
     {
+        if (_isCasting && _isGroundedCast) return;
+
         if (attackAction.WasPressedThisFrame())
         {
             if (_animations != null)
@@ -167,5 +193,48 @@ public class PlayerController : MonoBehaviour
             _animations.isGrounded = _groundDetector.IsGrounded;
             _animations.yVelocity = rb.linearVelocity.y;
         }
+    }
+
+    private void HandleFireball()
+    {
+        if (_isCasting) return;
+
+        if (fireballAction.WasPressedThisFrame())
+        {
+            _isCasting = true;
+            _isGroundedCast = _groundDetector.IsGrounded;
+            if (_animations != null)
+            {
+                _animations.PlayCast();
+            }
+        }
+    }
+
+    public void SpawnFireball()
+    {
+        if (fireballPrefab == null || fireballSpawnPoint == null)
+        {
+            Debug.LogWarning("[PlayerController] fireballPrefab or fireballSpawnPoint is not assigned!");
+            return;
+        }
+
+        GameObject fireballObj = Instantiate(fireballPrefab, fireballSpawnPoint.position, Quaternion.identity);
+        Fireball fireball = fireballObj.GetComponent<Fireball>();
+        if (fireball != null)
+        {
+            Vector2 launchDir = new Vector2(Mathf.Sign(transform.localScale.x), 0f);
+            fireball.Launch(launchDir);
+        }
+
+        CameraController cam = Camera.main?.GetComponent<CameraController>();
+        if (cam != null)
+        {
+            cam.Shake(0.08f, 0.12f);
+        }
+    }
+
+    public void EndCast()
+    {
+        _isCasting = false;
     }
 }

@@ -24,4 +24,9 @@ public class PlayerAnimations : MonoBehaviour
     {
         _animator.SetTrigger("attack");
     }
+
+    public void PlayCast()
+    {
+        _animator.SetTrigger("cast");
+    }
 }
