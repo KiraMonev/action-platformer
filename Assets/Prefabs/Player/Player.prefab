@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6103807452932570355
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6593702632822980506}
+  m_Layer: 0
+  m_Name: FireballSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6593702632822980506
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6103807452932570355}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.6, y: 0.2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5420435966191384310}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7523663487746463820
 GameObject:
   m_ObjectHideFlags: 0
@@ -47,9 +78,10 @@ GameObject:
   - component: {fileID: 5620360001281145449}
   - component: {fileID: 5892731995729746085}
   - component: {fileID: 4863803927306577811}
+  - component: {fileID: 8653567756060056456}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -64,10 +96,11 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.56941, y: -1.95007, z: 2}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4785704307809187287}
+  - {fileID: 6593702632822980506}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4910132512708116474
@@ -117,7 +150,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 15
   m_MaskInteraction: 0
   m_Sprite: {fileID: 5296555767818526437, guid: bc1e9e28ce82d2145a8f03446697d73b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -152,7 +185,7 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
@@ -190,7 +223,7 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.06999999, y: -0.0091359615}
+  m_Offset: {x: 0.06999999, y: 0.9508641}
   m_Size: {x: 0.6, y: 1.9017282}
   m_Direction: 0
 --- !u!114 &6495359056574188048
@@ -206,7 +239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   rb: {fileID: 6748101585313083111}
-  moveSpeed: 5
+  moveSpeed: 6.5
   moveAction:
     m_Name: Move
     m_Type: 0
@@ -257,12 +290,36 @@ MonoBehaviour:
       m_Action: Jump
       m_Flags: 0
     m_Flags: 0
-  jumpForce: 6
-  groundCheck: {fileID: 4785704307809187287}
-  groundCheckRadius: 0.2
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
+  attackAction:
+    m_Name: Attack
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 7cb87073-88ea-4fb9-9eba-48c7624a9361
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  fireballAction:
+    m_Name: Fireball
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: b0a2b1a1-a690-4320-9971-0fe0b7a204e2
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 3516aad1-c5aa-40af-8153-cb9ed7c6422c
+      m_Path: <Mouse>/rightButton
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Fireball
+      m_Flags: 0
+    m_Flags: 0
+  jumpForce: 7.8
+  fireballPrefab: {fileID: 2240000859495049164, guid: 7bfe1fcc799173b4cb645ac143f2f6c4, type: 3}
+  fireballSpawnPoint: {fileID: 6593702632822980506}
+  footstepInterval: 0.35
 --- !u!114 &5620360001281145449
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -317,3 +374,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68fa5305383c9434fb5bc5ad214d7840, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimations
+--- !u!114 &8653567756060056456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8217454233225078959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 234ed9b6e3897f645b2ecfe3d128fe75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GroundDetector
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  checkDistance: 0.05
+  checkWidthPercent: 0.9
