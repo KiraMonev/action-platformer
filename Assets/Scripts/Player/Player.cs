@@ -16,10 +16,14 @@ public class Player : MonoBehaviour, IDamageable
 
     private float _invulnTimer;
     private SpriteRenderer _sr;
+    private Vector2 _lastSafePosition;
+    private GroundDetector _gd;
 
     private void Start()
     {
         _sr = GetComponent<SpriteRenderer>();
+        _gd = GetComponent<GroundDetector>();
+        _lastSafePosition = transform.position;
     }
 
     private void Update()
@@ -40,6 +44,14 @@ public class Player : MonoBehaviour, IDamageable
                 Color c = _sr.color;
                 c.a = 1f;
                 _sr.color = c;
+            }
+        }
+
+        if (_gd != null && _gd.IsGrounded)
+        {
+            if (_gd.IsSafelyInland())
+            {
+                _lastSafePosition = transform.position;
             }
         }
     }
@@ -73,6 +85,11 @@ public class Player : MonoBehaviour, IDamageable
 
     public void TakeDamage(int damage)
     {
+        TakeDamage(damage, false);
+    }
+
+    public void TakeDamage(int damage, bool bypassKnockback)
+    {
         if (health <= 0 || _invulnTimer > 0f || _isDead) return;
 
         health -= damage;
@@ -93,7 +110,7 @@ public class Player : MonoBehaviour, IDamageable
 
         _invulnTimer = 1.2f;
 
-        if (TryGetComponent<PlayerController>(out var controller))
+        if (!bypassKnockback && TryGetComponent<PlayerController>(out var controller))
         {
             float knockbackDirX = -Mathf.Sign(transform.localScale.x);
             Vector2 knockbackForce = new Vector2(knockbackDirX * 3.5f, 3.0f);
@@ -104,6 +121,22 @@ public class Player : MonoBehaviour, IDamageable
         if (cam != null)
         {
             cam.Shake(0.2f, 0.25f);
+        }
+    }
+
+    public void RespawnAtLastSafeGround(int damage)
+    {
+        if (_isDead) return;
+
+        TakeDamage(damage, true);
+
+        if (!_isDead)
+        {
+            transform.position = _lastSafePosition;
+            if (TryGetComponent<PlayerController>(out var controller))
+            {
+                controller.ResetMovementState();
+            }
         }
     }
 

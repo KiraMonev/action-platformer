@@ -22,6 +22,24 @@ public class GroundDetector : MonoBehaviour
         IsGrounded = CheckGrounded();
     }
 
+    public bool IsSafelyInland()
+    {
+        if (_collider == null) return false;
+        Bounds bounds = _collider.bounds;
+        
+        // Используем ширину проверки, чтобы не учитывать закругленные края коллайдера
+        float width = bounds.size.x * checkWidthPercent;
+        Vector2 leftOrigin = new Vector2(bounds.center.x - width / 2f, bounds.min.y + 0.1f);
+        Vector2 rightOrigin = new Vector2(bounds.center.x + width / 2f, bounds.min.y + 0.1f);
+        
+        float dist = checkDistance + 0.2f; // Чуть длиннее, чтобы точно задеть землю
+        
+        bool hitLeft = Physics2D.Raycast(leftOrigin, Vector2.down, dist, groundLayer);
+        bool hitRight = Physics2D.Raycast(rightOrigin, Vector2.down, dist, groundLayer);
+        
+        return hitLeft && hitRight;
+    }
+
     private bool CheckGrounded()
     {
         if (_collider == null) return false;

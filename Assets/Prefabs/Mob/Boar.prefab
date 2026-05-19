@@ -83,7 +83,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 15
   m_MaskInteraction: 0
   m_Sprite: {fileID: -3145328045451892686, guid: c1303f5e5eb51fb44a8d7be282c10d13, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -211,5 +211,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   detectionDistance: 7
-  detectionBoxSize: {x: 7, y: 1.5}
+  attackRange: 1.5
+  attackPrepDuration: 0.6
   cooldownDuration: 1.8

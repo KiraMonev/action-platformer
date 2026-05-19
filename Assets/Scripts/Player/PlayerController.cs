@@ -293,4 +293,14 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = Vector2.zero;
         rb.AddForce(force, ForceMode2D.Impulse);
     }
+
+    public void ResetMovementState()
+    {
+        _knockbackTimer = 0.2f; // Кратковременный "стан" ввода, чтобы игрок не убежал сразу после респауна
+        _isCasting = false;
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+        }
+    }
 }

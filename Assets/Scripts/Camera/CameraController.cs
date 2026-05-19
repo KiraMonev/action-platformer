@@ -78,12 +78,6 @@ public class CameraController : MonoBehaviour
         
         Vector3 nextPosition = new Vector3(newX, newY, transform.position.z);
 
-        if (useBounds)
-        {
-            nextPosition.x = Mathf.Clamp(nextPosition.x, minBounds.x, maxBounds.x);
-            nextPosition.y = Mathf.Clamp(nextPosition.y, minBounds.y, maxBounds.y);
-        }
-
         if (_shakeDuration > 0)
         {
             _shakeOffset = Random.insideUnitSphere * _shakeMagnitude;
@@ -97,7 +91,15 @@ public class CameraController : MonoBehaviour
             _shakeOffset = Vector3.zero;
         }
 
-        transform.position = nextPosition + _shakeOffset;
+        Vector3 finalPosition = nextPosition + _shakeOffset;
+
+        if (useBounds)
+        {
+            finalPosition.x = Mathf.Clamp(finalPosition.x, minBounds.x, maxBounds.x);
+            finalPosition.y = Mathf.Clamp(finalPosition.y, minBounds.y, maxBounds.y);
+        }
+
+        transform.position = finalPosition;
     }
 
     /// <summary>
