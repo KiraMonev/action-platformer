@@ -119,13 +119,6 @@ public class PlayerController : MonoBehaviour
     private void HandleLanding()
     {
         bool isGrounded = _groundDetector.IsGrounded;
-        if (isGrounded && !_wasGrounded && rb.linearVelocity.y <= 0.1f)
-        {
-            if (AudioManager.Instance != null)
-            {
-                AudioManager.Instance.Play(SoundType.Land);
-            }
-        }
         _wasGrounded = isGrounded;
     }
 
