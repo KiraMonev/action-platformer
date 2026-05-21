@@ -55,6 +55,11 @@ public class CameraController : MonoBehaviour
         {
             Vector3 targetPos = target.position + (Vector3)targetOffset;
             targetPos.z = transform.position.z;
+            if (useBounds)
+            {
+                targetPos.x = Mathf.Clamp(targetPos.x, minBounds.x, maxBounds.x);
+                targetPos.y = Mathf.Clamp(targetPos.y, minBounds.y, maxBounds.y);
+            }
             transform.position = targetPos;
         }
     }

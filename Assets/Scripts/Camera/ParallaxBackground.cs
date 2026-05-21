@@ -16,7 +16,9 @@ namespace Environment
         [SerializeField] private bool infiniteVertical = false;
 
         private Transform _cameraTransform;
-        private Vector3 _lastCameraPosition;
+        private Vector3 _startBackgroundPosition;
+        private Vector3 _startCameraPosition;
+        private bool _isInitialized = false;
         private float _textureUnitSizeX;
         private float _textureUnitSizeY;
 
@@ -25,7 +27,6 @@ namespace Environment
             if (Camera.main != null)
             {
                 _cameraTransform = Camera.main.transform;
-                _lastCameraPosition = _cameraTransform.position;
             }
             else
             {
@@ -40,40 +41,40 @@ namespace Environment
                 _textureUnitSizeX = spriteRenderer.sprite.rect.width / spriteRenderer.sprite.pixelsPerUnit;
                 _textureUnitSizeY = spriteRenderer.sprite.rect.height / spriteRenderer.sprite.pixelsPerUnit;
             }
+
+            _startBackgroundPosition = transform.position;
         }
 
         private void LateUpdate()
         {
             if (_cameraTransform == null) return;
 
-            Vector3 deltaMovement = _cameraTransform.position - _lastCameraPosition;
-            
-            // Двигаем фон в зависимости от перемещения камеры и множителя
-            // parallaxMultiplier определяет, насколько фон СЛЕДУЕТ за камерой.
-            // Если multiplier = 1, фон полностью привязан к камере (не отстает, нет параллакса).
-            // Если multiplier = 0, фон стоит на месте.
-            transform.position += new Vector3(deltaMovement.x * parallaxMultiplier.x, deltaMovement.y * parallaxMultiplier.y, 0);
-            
-            _lastCameraPosition = _cameraTransform.position;
+            if (!_isInitialized)
+            {
+                _startCameraPosition = _cameraTransform.position;
+                _isInitialized = true;
+            }
 
-            // Логика бесконечной прокрутки (тайлинг)
+            Vector3 travel = _cameraTransform.position - _startCameraPosition;
+
+            float targetX = _startBackgroundPosition.x + travel.x * parallaxMultiplier.x;
+            float targetY = _startBackgroundPosition.y + travel.y * parallaxMultiplier.y;
+
             if (infiniteHorizontal && _textureUnitSizeX > 0)
             {
-                if (Mathf.Abs(_cameraTransform.position.x - transform.position.x) >= _textureUnitSizeX)
-                {
-                    float offsetPositionX = (_cameraTransform.position.x - transform.position.x) % _textureUnitSizeX;
-                    transform.position = new Vector3(_cameraTransform.position.x - offsetPositionX, transform.position.y, transform.position.z);
-                }
+                float relativeTravelX = travel.x * (1 - parallaxMultiplier.x);
+                int tileOffsetX = Mathf.RoundToInt(relativeTravelX / _textureUnitSizeX);
+                targetX += tileOffsetX * _textureUnitSizeX;
             }
 
             if (infiniteVertical && _textureUnitSizeY > 0)
             {
-                if (Mathf.Abs(_cameraTransform.position.y - transform.position.y) >= _textureUnitSizeY)
-                {
-                    float offsetPositionY = (_cameraTransform.position.y - transform.position.y) % _textureUnitSizeY;
-                    transform.position = new Vector3(transform.position.x, _cameraTransform.position.y - offsetPositionY, transform.position.z);
-                }
+                float relativeTravelY = travel.y * (1 - parallaxMultiplier.y);
+                int tileOffsetY = Mathf.RoundToInt(relativeTravelY / _textureUnitSizeY);
+                targetY += tileOffsetY * _textureUnitSizeY;
             }
+
+            transform.position = new Vector3(targetX, targetY, transform.position.z);
         }
     }
 }
