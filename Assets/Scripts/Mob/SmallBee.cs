@@ -47,12 +47,16 @@ public class SmallBee : MonoBehaviour, IDamageable
     [SerializeField] private float fallSpeed = 3.0f;
     [SerializeField] private float upperRayOffset = 0.8f;
 
+    [Header("Starting Settings")]
+    [SerializeField] private bool randomizeStartPhase = true;
+
     private State _currentState = State.Patrol;
     private int _facingDir = -1; // -1 = Left, 1 = Right
     private Vector2 _spawnPos;
     private float _stateTimer;
     private Transform _playerTransform;
     private float _obstacleYOffset = 0f;
+    private float _timeOffset = 0f;
 
     public string CurrentState => _currentState.ToString();
     public Vector2 SpawnPos => _spawnPos;
@@ -78,6 +82,21 @@ public class SmallBee : MonoBehaviour, IDamageable
 
         // Default facing direction based on scale
         _facingDir = transform.localScale.x < 0 ? 1 : -1;
+
+        if (randomizeStartPhase)
+        {
+            _timeOffset = Random.Range(0f, 100f);
+        }
+
+        // Ignore collisions with other bees to prevent getting stuck
+        SmallBee[] allBees = FindObjectsByType<SmallBee>(FindObjectsSortMode.None);
+        foreach (var bee in allBees)
+        {
+            if (bee != this && bee.TryGetComponent<Collider2D>(out var otherCollider))
+            {
+                Physics2D.IgnoreCollision(_collider, otherCollider, true);
+            }
+        }
 
         var player = GameObject.FindWithTag("Player");
         if (player != null)
@@ -107,7 +126,7 @@ public class SmallBee : MonoBehaviour, IDamageable
 
         // Float wave Y height target (only relevant for Patrol and Cooldown/Prep)
         // Obstacle Y offset is added to the base height so the sinusoid pattern is preserved cleanly.
-        float targetY = (_spawnPos.y + _obstacleYOffset) + Mathf.Sin(Time.time * floatSpeed) * floatAmplitude;
+        float targetY = (_spawnPos.y + _obstacleYOffset) + Mathf.Sin((Time.time + _timeOffset) * floatSpeed) * floatAmplitude;
 
         switch (_currentState)
         {
@@ -406,11 +425,21 @@ public class SmallBee : MonoBehaviour, IDamageable
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (collision.gameObject.TryGetComponent<SmallBee>(out var otherBee))
+        {
+            Physics2D.IgnoreCollision(_collider, collision.collider, true);
+            return;
+        }
         HandleCollision(collision);
     }
 
     private void OnCollisionStay2D(Collision2D collision)
     {
+        if (collision.gameObject.TryGetComponent<SmallBee>(out var otherBee))
+        {
+            Physics2D.IgnoreCollision(_collider, collision.collider, true);
+            return;
+        }
         HandleCollision(collision);
     }
 
