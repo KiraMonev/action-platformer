@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
@@ -11,15 +12,18 @@ public class SmallBee : MonoBehaviour, IDamageable
     [SerializeField] private int maxHealth = 3;
     [SerializeField] private int currentHealth;
 
-    [Header("Movement (Patrol)")]
+    [Header("Patrol Zone (Blue Rectangle)")]
+    [SerializeField] private float patrolWidth = 8.0f;
+    [SerializeField] private float patrolHeight = 2.5f;
     [SerializeField] private float patrolSpeed = 2.0f;
-    [SerializeField] private float patrolRange = 4.0f;
     [SerializeField] private float floatSpeed = 3.0f;
     [SerializeField] private float floatAmplitude = 0.4f;
 
-    [Header("Detection")]
-    [SerializeField] private float detectionWidth = 8.0f;
-    [SerializeField] private float detectionHeight = 2.5f;
+    [Header("Player Detection Range (Purple Rectangle)")]
+    [SerializeField] private float detectionWidth = 14.0f;
+    [SerializeField] private float detectionHeight = 4.5f;
+    [Tooltip("Multiplier for detection range to define the chase limit (yellow zone) before the bee returns.")]
+    [SerializeField] private float leashMultiplier = 1.5f;
 
     [Header("Attack (Dash)")]
     [SerializeField] private float chargeSpeed = 4.5f;
@@ -33,11 +37,25 @@ public class SmallBee : MonoBehaviour, IDamageable
     [Header("Physics & Ground Check")]
     [SerializeField] private LayerMask groundLayer;
 
+    [Header("Obstacle Avoidance")]
+    [SerializeField] private float obstacleCheckDistance = 1.0f;
+    [SerializeField] private float probeHeight = 1.0f;
+    [SerializeField] private float probeDepth = 2.0f;
+    [SerializeField] private float lookAheadDistance = 0.8f;
+    [SerializeField] private float minAltitude = 0.8f;
+    [SerializeField] private float climbSpeed = 5.0f;
+    [SerializeField] private float fallSpeed = 3.0f;
+    [SerializeField] private float upperRayOffset = 0.8f;
+
     private State _currentState = State.Patrol;
     private int _facingDir = -1; // -1 = Left, 1 = Right
     private Vector2 _spawnPos;
     private float _stateTimer;
     private Transform _playerTransform;
+    private float _obstacleYOffset = 0f;
+
+    public string CurrentState => _currentState.ToString();
+    public Vector2 SpawnPos => _spawnPos;
 
     private Rigidbody2D _rb;
     private Animator _animator;
@@ -85,8 +103,11 @@ public class SmallBee : MonoBehaviour, IDamageable
             return;
         }
 
+        UpdateObstacleAvoidance();
+
         // Float wave Y height target (only relevant for Patrol and Cooldown/Prep)
-        float targetY = _spawnPos.y + Mathf.Sin(Time.time * floatSpeed) * floatAmplitude;
+        // Obstacle Y offset is added to the base height so the sinusoid pattern is preserved cleanly.
+        float targetY = (_spawnPos.y + _obstacleYOffset) + Mathf.Sin(Time.time * floatSpeed) * floatAmplitude;
 
         switch (_currentState)
         {
@@ -117,16 +138,102 @@ public class SmallBee : MonoBehaviour, IDamageable
         }
     }
 
+    private void UpdateObstacleAvoidance()
+    {
+        if (_currentState != State.Patrol && _currentState != State.Charge && _currentState != State.Cooldown)
+        {
+            _obstacleYOffset = Mathf.MoveTowards(_obstacleYOffset, 0f, Time.fixedDeltaTime * fallSpeed);
+            return;
+        }
+
+        float bodyRadius = 0.4f;
+        if (_collider is CircleCollider2D circle)
+        {
+            bodyRadius = circle.radius * Mathf.Abs(transform.localScale.x);
+        }
+
+        Vector2 origin = (Vector2)transform.position + new Vector2(_facingDir * bodyRadius, 0f);
+        Vector2 direction = new Vector2(_facingDir, 0f);
+
+        // Center forward ray for wall detection
+        RaycastHit2D centerHit = Physics2D.Raycast(origin, direction, obstacleCheckDistance, groundLayer);
+
+        // Upper forward ray to check if we can fly over
+        Vector2 upperOrigin = origin + Vector2.up * upperRayOffset;
+        RaycastHit2D upperHit = Physics2D.Raycast(upperOrigin, direction, obstacleCheckDistance, groundLayer);
+
+        bool obstacleAhead = centerHit.collider != null;
+        bool canFlyOver = upperHit.collider == null;
+
+        // Downward probes to find ground level below and ahead
+        Vector2 probeOriginBelow = (Vector2)transform.position + Vector2.up * probeHeight;
+        Vector2 probeOriginAhead = probeOriginBelow + new Vector2(_facingDir * lookAheadDistance, 0f);
+        float rayLength = probeHeight + probeDepth;
+
+        RaycastHit2D hitBelow = Physics2D.Raycast(probeOriginBelow, Vector2.down, rayLength, groundLayer);
+        RaycastHit2D hitAhead = Physics2D.Raycast(probeOriginAhead, Vector2.down, rayLength, groundLayer);
+
+        float groundBelowY = hitBelow.collider != null ? hitBelow.point.y : -Mathf.Infinity;
+        float groundAheadY = hitAhead.collider != null ? hitAhead.point.y : -Mathf.Infinity;
+        float maxGroundY = Mathf.Max(groundBelowY, groundAheadY);
+
+        float desiredOffset = 0f;
+        if (maxGroundY != -Mathf.Infinity)
+        {
+            if (_currentState == State.Charge)
+            {
+                // During charge, we target the player's chest height directly (no sinusoid)
+                float playerTargetY = (_playerTransform != null) ? (_playerTransform.position.y + 1.2f) : transform.position.y;
+                desiredOffset = Mathf.Max(0f, (maxGroundY + minAltitude) - playerTargetY);
+            }
+            else
+            {
+                // During patrol or cooldown, we target a sinusoid.
+                // We want the lowest point of the sinusoid to clear the ground.
+                desiredOffset = Mathf.Max(0f, (maxGroundY + minAltitude + floatAmplitude) - _spawnPos.y);
+            }
+        }
+
+        // Handle wall flip: if there is an obstacle in front and we cannot fly over it
+        if (_currentState == State.Patrol && obstacleAhead && !canFlyOver)
+        {
+            Flip();
+            _obstacleYOffset = 0f;
+            return;
+        }
+        else if (_currentState == State.Charge && obstacleAhead && !canFlyOver)
+        {
+            // Abort charge if blocked by a tall wall
+            _currentState = State.Patrol;
+            _obstacleYOffset = 0f;
+            return;
+        }
+
+        // Smoothly interpolate current offset towards desired offset
+        if (_obstacleYOffset < desiredOffset)
+        {
+            _obstacleYOffset = Mathf.MoveTowards(_obstacleYOffset, desiredOffset, Time.fixedDeltaTime * climbSpeed);
+        }
+        else
+        {
+            _obstacleYOffset = Mathf.MoveTowards(_obstacleYOffset, desiredOffset, Time.fixedDeltaTime * fallSpeed);
+        }
+    }
+
     private void ExecutePatrol(float targetY)
     {
         // Horizontal patrol movement
         float targetVx = _facingDir * patrolSpeed;
-        float targetVy = (targetY - transform.position.y) * 4f; // Smooth floating towards target Y
+        float targetVy = (targetY - transform.position.y) * 4f; // Smooth floating towards target Y (offset built-in)
         _rb.linearVelocity = new Vector2(targetVx, targetVy);
 
-        // Turn back if exceeded patrol range from spawn point
+        // Turn back if exceeded patrol range from spawn point (accounting for collider size)
         float distFromSpawn = transform.position.x - _spawnPos.x;
-        if (Mathf.Abs(distFromSpawn) >= patrolRange)
+        float halfWidth = patrolWidth / 2f;
+        float colliderOffset = (_collider != null) ? _collider.bounds.extents.x : 0f;
+        float patrolLimit = Mathf.Max(0f, halfWidth - colliderOffset);
+
+        if (Mathf.Abs(distFromSpawn) >= patrolLimit)
         {
             if (Mathf.Sign(distFromSpawn) == Mathf.Sign(_facingDir))
             {
@@ -134,24 +241,30 @@ public class SmallBee : MonoBehaviour, IDamageable
             }
         }
 
-        // Raycast forward to avoid walls
-        RaycastHit2D wallHit = Physics2D.Raycast(transform.position, new Vector2(_facingDir, 0f), 0.8f, groundLayer);
-        if (wallHit.collider != null)
-        {
-            Flip();
-        }
-
         DetectPlayer();
     }
 
-    private void DetectPlayer()
+    private bool IsPlayerInDetectionRange()
     {
-        if (_playerTransform == null) return;
+        if (_playerTransform == null) return false;
 
         // Target the player's chest (approx 1.2 units above pivot/feet)
         Vector2 targetPos = new Vector2(_playerTransform.position.x, _playerTransform.position.y + 1.2f);
         Vector2 diff = targetPos - (Vector2)transform.position;
-        if (Mathf.Abs(diff.x) <= detectionWidth / 2f && Mathf.Abs(diff.y) <= detectionHeight / 2f)
+        return Mathf.Abs(diff.x) <= detectionWidth / 2f && Mathf.Abs(diff.y) <= detectionHeight / 2f;
+    }
+
+    private bool IsInLeashZone(Vector2 position)
+    {
+        Vector2 diff = position - _spawnPos;
+        float leashWidth = detectionWidth * leashMultiplier;
+        float leashHeight = detectionHeight * leashMultiplier;
+        return Mathf.Abs(diff.x) <= leashWidth / 2f && Mathf.Abs(diff.y) <= leashHeight / 2f;
+    }
+
+    private void DetectPlayer()
+    {
+        if (IsPlayerInDetectionRange())
         {
             _currentState = State.Charge;
         }
@@ -165,29 +278,29 @@ public class SmallBee : MonoBehaviour, IDamageable
             return;
         }
 
-        // Target the player's chest (approx 1.2 units above pivot/feet)
         Vector2 targetPos = new Vector2(_playerTransform.position.x, _playerTransform.position.y + 1.2f);
-        Vector2 diff = targetPos - (Vector2)transform.position;
-        float xDist = Mathf.Abs(diff.x);
-        float yDist = Mathf.Abs(diff.y);
 
-        // If player gets out of detection bounds (with hysteresis/buffer), return to patrol
-        if (xDist > detectionWidth / 2f * 1.15f || yDist > detectionHeight / 2f * 1.15f)
+        // If either the BEE itself or the player exits the leash zone, return to Patrol
+        if (!IsInLeashZone(transform.position) || !IsInLeashZone(targetPos))
         {
             _currentState = State.Patrol;
             return;
         }
 
+        // Target the player's chest (approx 1.2 units above pivot/feet)
+        Vector2 diffToBee = targetPos - (Vector2)transform.position;
+        float xDist = Mathf.Abs(diffToBee.x);
+
         // Face player horizontally
-        float dirToPlayer = Mathf.Sign(diff.x);
+        float dirToPlayer = Mathf.Sign(diffToBee.x);
         if (dirToPlayer != _facingDir)
         {
             Flip();
         }
 
-        // Fly towards player horizontally and match vertical level smoothly
+        // Fly towards player horizontally and match vertical level smoothly with avoidance
         float targetVx = _facingDir * chargeSpeed;
-        float targetVy = diff.y * 4f; // match player chest height
+        float targetVy = (targetPos.y + _obstacleYOffset - transform.position.y) * 4f;
         _rb.linearVelocity = new Vector2(targetVx, targetVy);
 
         // If player is close enough, stop and prepare the strike
@@ -256,18 +369,18 @@ public class SmallBee : MonoBehaviour, IDamageable
 
     private void ExecuteCooldown(float targetY)
     {
-        // Float on Y axis while standing still horizontally
+        // Float on Y axis while standing still horizontally with avoidance (offset built-in)
         float targetVy = (targetY - transform.position.y) * 4f;
         _rb.linearVelocity = new Vector2(0f, targetVy);
 
         _stateTimer -= Time.fixedDeltaTime;
         if (_stateTimer <= 0f)
         {
-            // After cooldown, check if we should charge player again
+            // After cooldown, re-aggro if both the bee and the player are inside the leash zone
             if (_playerTransform != null)
             {
-                Vector2 diff = _playerTransform.position - transform.position;
-                if (Mathf.Abs(diff.x) <= detectionWidth / 2f && Mathf.Abs(diff.y) <= detectionHeight / 2f)
+                Vector2 targetPos = new Vector2(_playerTransform.position.x, _playerTransform.position.y + 1.2f);
+                if (IsInLeashZone(transform.position) && IsInLeashZone(targetPos))
                 {
                     _currentState = State.Charge;
                 }
@@ -319,6 +432,15 @@ public class SmallBee : MonoBehaviour, IDamageable
                 _rb.AddForce(new Vector2(-_facingDir * 2f, 1f), ForceMode2D.Impulse);
                 EnterCooldown();
             }
+            else if (_currentState == State.Patrol)
+            {
+                // Only flip if we are actually facing towards the player to prevent jittering when overlapping
+                float dirToPlayer = Mathf.Sign(collision.transform.position.x - transform.position.x);
+                if (dirToPlayer == Mathf.Sign(_facingDir))
+                {
+                    Flip();
+                }
+            }
         }
         else if (((1 << collision.gameObject.layer) & groundLayer) != 0)
         {
@@ -328,7 +450,25 @@ public class SmallBee : MonoBehaviour, IDamageable
             }
             else if (_currentState == State.Patrol)
             {
-                Flip();
+                // Only flip if we hit a wall in front of us
+                bool hitWallInFront = false;
+                foreach (ContactPoint2D contact in collision.contacts)
+                {
+                    if (Mathf.Abs(contact.normal.x) > 0.7f)
+                    {
+                        // Normal points away from the wall surface.
+                        // If we are moving towards the wall, normal.x and _facingDir must have opposite signs.
+                        if (Mathf.Sign(contact.normal.x) != Mathf.Sign(_facingDir))
+                        {
+                            hitWallInFront = true;
+                            break;
+                        }
+                    }
+                }
+                if (hitWallInFront)
+                {
+                    Flip();
+                }
             }
         }
     }
@@ -370,8 +510,23 @@ public class SmallBee : MonoBehaviour, IDamageable
 
         if (currentHealth > 0)
         {
-            // Go back to patrol/detection
-            _currentState = State.Patrol;
+            // Re-aggro if both the bee and the player are inside the leash zone
+            if (_playerTransform != null)
+            {
+                Vector2 targetPos = new Vector2(_playerTransform.position.x, _playerTransform.position.y + 1.2f);
+                if (IsInLeashZone(transform.position) && IsInLeashZone(targetPos))
+                {
+                    _currentState = State.Charge;
+                }
+                else
+                {
+                    _currentState = State.Patrol;
+                }
+            }
+            else
+            {
+                _currentState = State.Patrol;
+            }
         }
     }
 
@@ -396,42 +551,20 @@ public class SmallBee : MonoBehaviour, IDamageable
 
     private void OnDrawGizmos()
     {
-        // Soft transparent cyan for detection box (moves with the bee)
-        Gizmos.color = new Color(0f, 1f, 1f, 0.2f);
-        Gizmos.DrawWireCube(transform.position, new Vector3(detectionWidth, detectionHeight, 0f));
-
-        // Soft yellow for patrol range (centered at spawn point)
-        Gizmos.color = new Color(1f, 0.92f, 0.016f, 0.2f);
-        Vector3 spawn = Application.isPlaying ? (Vector3)_spawnPos : transform.position;
-        Vector3 leftBound = spawn - new Vector3(patrolRange, 0f, 0f);
-        Vector3 rightBound = spawn + new Vector3(patrolRange, 0f, 0f);
-        
-        Gizmos.DrawLine(leftBound, rightBound);
-        Gizmos.DrawLine(leftBound + Vector3.up * 0.15f, leftBound + Vector3.down * 0.15f);
-        Gizmos.DrawLine(rightBound + Vector3.up * 0.15f, rightBound + Vector3.down * 0.15f);
-        Gizmos.DrawWireSphere(spawn, 0.08f);
-
-        // Soft orange for attack range trigger (moves with the bee)
-        Gizmos.color = new Color(1f, 0.6f, 0f, 0.25f);
-        Gizmos.DrawLine(transform.position - new Vector3(attackRange, 0f, 0f), transform.position + new Vector3(attackRange, 0f, 0f));
+        // Keep the editor viewport clean when the bee is not selected.
     }
 
     private void OnDrawGizmosSelected()
     {
-        // Bright solid cyan for selected detection box (moves with the bee)
+        Vector3 center = Application.isPlaying ? (Vector3)_spawnPos : transform.position;
+
+        // Bright solid cyan for selected patrol zone
         Gizmos.color = Color.cyan;
-        Gizmos.DrawWireCube(transform.position, new Vector3(detectionWidth, detectionHeight, 0f));
+        Gizmos.DrawWireCube(center, new Vector3(patrolWidth, patrolHeight, 0f));
 
-        // Bright yellow for selected patrol range (centered at spawn point)
-        Gizmos.color = Color.yellow;
-        Vector3 spawn = Application.isPlaying ? (Vector3)_spawnPos : transform.position;
-        Vector3 leftBound = spawn - new Vector3(patrolRange, 0f, 0f);
-        Vector3 rightBound = spawn + new Vector3(patrolRange, 0f, 0f);
-
-        Gizmos.DrawLine(leftBound, rightBound);
-        Gizmos.DrawLine(leftBound + Vector3.up * 0.2f, leftBound + Vector3.down * 0.2f);
-        Gizmos.DrawLine(rightBound + Vector3.up * 0.2f, rightBound + Vector3.down * 0.2f);
-        Gizmos.DrawWireSphere(spawn, 0.1f);
+        // Bright yellow for selected leash boundary (centered at spawn, based on detection range)
+        Gizmos.color = new Color(1f, 0.92f, 0.016f, 0.25f);
+        Gizmos.DrawWireCube(center, new Vector3(detectionWidth * leashMultiplier, detectionHeight * leashMultiplier, 0f));
 
         // Solid orange for attack range trigger (moves with the bee)
         Gizmos.color = new Color(1f, 0.5f, 0f);
@@ -439,5 +572,46 @@ public class SmallBee : MonoBehaviour, IDamageable
         Gizmos.DrawLine(pos - new Vector3(attackRange, 0f, 0f), pos + new Vector3(attackRange, 0f, 0f));
         Gizmos.DrawLine(pos - new Vector3(attackRange, 0f, 0f) + Vector3.up * 0.15f, pos - new Vector3(attackRange, 0f, 0f) + Vector3.down * 0.15f);
         Gizmos.DrawLine(pos + new Vector3(attackRange, 0f, 0f) + Vector3.up * 0.15f, pos + new Vector3(attackRange, 0f, 0f) + Vector3.down * 0.15f);
+
+        // Real-time player detection range centered on the bee (soft purple-blue)
+        Gizmos.color = new Color(0.3f, 0.5f, 1f, 0.4f);
+        Gizmos.DrawWireCube(pos, new Vector3(detectionWidth, detectionHeight, 0f));
+
+        // Draw obstacle avoidance probes
+        float bodyRadius = 0.4f;
+        if (_collider is CircleCollider2D circle)
+        {
+            bodyRadius = circle.radius * Mathf.Abs(transform.localScale.x);
+        }
+        int dir = transform.localScale.x < 0 ? 1 : -1;
+        if (Application.isPlaying) dir = _facingDir;
+
+        Vector2 origin = (Vector2)transform.position + new Vector2(dir * bodyRadius, 0f);
+        Vector2 direction = new Vector2(dir, 0f);
+
+        // Wall check rays
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(origin, direction * obstacleCheckDistance);
+        Gizmos.DrawRay(origin + Vector2.up * upperRayOffset, direction * obstacleCheckDistance);
+
+        // Downward height probes
+        Gizmos.color = Color.green;
+        Vector2 probeOriginBelow = (Vector2)transform.position + Vector2.up * probeHeight;
+        Vector2 probeOriginAhead = probeOriginBelow + new Vector2(dir * lookAheadDistance, 0f);
+        float rayLength = probeHeight + probeDepth;
+        Gizmos.DrawRay(probeOriginBelow, Vector2.down * rayLength);
+        Gizmos.DrawRay(probeOriginAhead, Vector2.down * rayLength);
     }
+
+    #if UNITY_EDITOR
+    public void Test_SetState(string stateName)
+    {
+        _currentState = (State)System.Enum.Parse(typeof(State), stateName);
+    }
+
+    public void Test_SetSpawnPos(Vector2 pos)
+    {
+        _spawnPos = pos;
+    }
+    #endif
 }
