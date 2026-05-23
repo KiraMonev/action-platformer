@@ -92,6 +92,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         if (_isDead) return;
+        if (Time.timeScale == 0f) return;
 
         if (_knockbackTimer > 0f)
         {
