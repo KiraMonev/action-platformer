@@ -13,6 +13,7 @@ public class Player : MonoBehaviour, IDamageable
 
     public event Action OnDeath;
     private bool _isDead;
+    public bool IsDead => _isDead;
 
     private float _invulnTimer;
     private SpriteRenderer _sr;
