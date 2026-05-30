@@ -6934,73 +6934,12 @@ PrefabInstance:
       propertyPath: 'hearts.Array.data[2]'
       value: 
       objectReference: {fileID: 1015824379}
-    - target: {fileID: 6103807452932570355, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
-      propertyPath: m_Icon
-      value: 
-      objectReference: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}
-    - target: {fileID: 6495359056574188048, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
-      propertyPath: attackAction.m_Name
-      value: Attack
-      objectReference: {fileID: 0}
-    - target: {fileID: 6495359056574188048, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
-      propertyPath: attackAction.m_Type
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6495359056574188048, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
-      propertyPath: attackAction.m_ExpectedControlType
-      value: Button
-      objectReference: {fileID: 0}
-    - target: {fileID: 6495359056574188048, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
-      propertyPath: attackAction.m_SingletonActionBindings.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6495359056574188048, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
-      propertyPath: attackAction.m_SingletonActionBindings.Array.data[0].m_Id
-      value: 6a2f26ca-189c-4e50-8819-b9d9b40b560e
-      objectReference: {fileID: 0}
-    - target: {fileID: 6495359056574188048, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
-      propertyPath: attackAction.m_SingletonActionBindings.Array.data[0].m_Path
-      value: <Mouse>/leftButton
-      objectReference: {fileID: 0}
-    - target: {fileID: 6495359056574188048, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
-      propertyPath: attackAction.m_SingletonActionBindings.Array.data[0].m_Action
-      value: Attack
-      objectReference: {fileID: 0}
-    - target: {fileID: 6593702632822980506, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.71
-      objectReference: {fileID: 0}
-    - target: {fileID: 6748101585313083111, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
-      propertyPath: m_Interpolate
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7523663487746463820, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7694405182686894579, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
-      propertyPath: m_Size.y
-      value: 1.8639351
-      objectReference: {fileID: 0}
-    - target: {fileID: 7694405182686894579, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
-      propertyPath: m_Offset.y
-      value: 0.9697606
-      objectReference: {fileID: 0}
     - target: {fileID: 8217454233225078959, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 8217454233225078959, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
-      propertyPath: m_TagString
-      value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 8653567756060056456, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
-      propertyPath: groundLayer.m_Bits
-      value: 64
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 7523663487746463820, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f9b03a53d3e079a45be8bdc08087c967, type: 3}
