@@ -9,6 +9,10 @@ public class TransitionToNextLevel : MonoBehaviour
             if(SceneManager.GetActiveScene().buildIndex < 3) { 
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
             }
+            else
+            {
+                SceneManager.LoadScene("MainMenuScene");
+            }
         }
     }
 }
