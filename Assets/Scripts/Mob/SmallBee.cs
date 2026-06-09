@@ -509,6 +509,13 @@ public class SmallBee : MonoBehaviour, IDamageable
         currentHealth -= damage;
         _rb.linearVelocity = Vector2.zero;
 
+        float bloodPushDir = _playerTransform != null ? Mathf.Sign(transform.position.x - _playerTransform.position.x) : -_facingDir;
+        Vector2 bloodDir = new Vector2(bloodPushDir, 0.4f).normalized;
+        if (FXManager.Instance != null)
+        {
+            FXManager.Instance.PlayHitBlood(transform.position, bloodDir);
+        }
+
         if (_animator != null)
         {
             _animator.SetTrigger("hit");

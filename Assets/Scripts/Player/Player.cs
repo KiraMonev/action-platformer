@@ -95,6 +95,13 @@ public class Player : MonoBehaviour, IDamageable
 
         health -= damage;
 
+        float hitDirX = -Mathf.Sign(transform.localScale.x);
+        Vector2 bloodDir = new Vector2(hitDirX, 0.4f).normalized;
+        if (FXManager.Instance != null)
+        {
+            FXManager.Instance.PlayHitBlood(transform.position, bloodDir);
+        }
+
         if (health <= 0 && !_isDead)
         {
             _isDead = true;

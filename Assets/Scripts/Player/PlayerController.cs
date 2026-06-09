@@ -120,6 +120,13 @@ public class PlayerController : MonoBehaviour
     private void HandleLanding()
     {
         bool isGrounded = _groundDetector.IsGrounded;
+        if (isGrounded && !_wasGrounded)
+        {
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.Play(SoundType.Land);
+            }
+        }
         _wasGrounded = isGrounded;
     }
 

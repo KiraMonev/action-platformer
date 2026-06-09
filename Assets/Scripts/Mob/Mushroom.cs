@@ -515,6 +515,13 @@ public class Mushroom : MonoBehaviour, IDamageable
         currentHealth -= damage;
         _rb.linearVelocity = new Vector2(0f, _rb.linearVelocity.y);
 
+        float bloodPushDir = _playerTransform != null ? Mathf.Sign(transform.position.x - _playerTransform.position.x) : -_facingDir;
+        Vector2 bloodDir = new Vector2(bloodPushDir, 0.4f).normalized;
+        if (FXManager.Instance != null)
+        {
+            FXManager.Instance.PlayHitBlood(transform.position, bloodDir);
+        }
+
         // Animation is handled by SetState(State.Hit) inside HitRoutine,
         // which calls _animator.Play("Hit-Vanish"). No trigger needed.
 
