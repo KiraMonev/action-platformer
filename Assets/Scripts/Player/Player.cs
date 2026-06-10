@@ -99,7 +99,8 @@ public class Player : MonoBehaviour, IDamageable
         Vector2 bloodDir = new Vector2(hitDirX, 0.4f).normalized;
         if (FXManager.Instance != null)
         {
-            FXManager.Instance.PlayHitBlood(transform.position, bloodDir);
+            Vector2 spawnPos = _sr != null ? (Vector2)_sr.bounds.center : (Vector2)transform.position;
+            FXManager.Instance.PlayHitBlood(spawnPos, bloodDir);
         }
 
         if (health <= 0 && !_isDead)

@@ -519,7 +519,8 @@ public class Mushroom : MonoBehaviour, IDamageable
         Vector2 bloodDir = new Vector2(bloodPushDir, 0.4f).normalized;
         if (FXManager.Instance != null)
         {
-            FXManager.Instance.PlayHitBlood(transform.position, bloodDir);
+            Vector2 spawnPos = _collider != null ? (Vector2)_collider.bounds.center : (Vector2)transform.position;
+            FXManager.Instance.PlayHitBlood(spawnPos, bloodDir);
         }
 
         // Animation is handled by SetState(State.Hit) inside HitRoutine,
