@@ -197,7 +197,6 @@ public class Mushroom : MonoBehaviour, IDamageable
         if (_stateTimer <= 0f)
         {
             SetState(State.Patrol);
-            // Randomly choose direction
             if (Random.value > 0.5f) Flip();
         }
 
@@ -206,7 +205,6 @@ public class Mushroom : MonoBehaviour, IDamageable
 
     private void ExecutePatrol()
     {
-        // Check for wall or edge
         if (IsWallAhead() || !IsGroundAhead())
         {
             Flip();
@@ -214,7 +212,6 @@ public class Mushroom : MonoBehaviour, IDamageable
 
         _rb.linearVelocity = new Vector2(_facingDir * patrolSpeed, _rb.linearVelocity.y);
 
-        // Turn back if exceeded patrol range
         float distFromSpawn = transform.position.x - _spawnPos.x;
         float halfWidth = patrolWidth / 2f;
         if (Mathf.Abs(distFromSpawn) >= halfWidth)
@@ -239,14 +236,12 @@ public class Mushroom : MonoBehaviour, IDamageable
             return;
         }
 
-        // Return to patrol if outside leash zone
         if (!IsInLeashZone(transform.position))
         {
             SetState(State.Patrol);
             return;
         }
 
-        // Return to patrol if player too far
         if (!IsPlayerInDetectionRange())
         {
             SetState(State.Patrol);
@@ -259,7 +254,6 @@ public class Mushroom : MonoBehaviour, IDamageable
             Flip();
         }
 
-        // Check for wall or edge
         if (IsWallAhead() || !IsGroundAhead())
         {
             _rb.linearVelocity = new Vector2(0f, _rb.linearVelocity.y);
@@ -269,7 +263,6 @@ public class Mushroom : MonoBehaviour, IDamageable
             _rb.linearVelocity = new Vector2(_facingDir * chaseSpeed, _rb.linearVelocity.y);
         }
 
-        // Close enough to attack?
         float xDist = Mathf.Abs(_playerTransform.position.x - transform.position.x);
         if (xDist <= attackRange)
         {
@@ -523,8 +516,7 @@ public class Mushroom : MonoBehaviour, IDamageable
             FXManager.Instance.PlayHitBlood(spawnPos, bloodDir);
         }
 
-        // Animation is handled by SetState(State.Hit) inside HitRoutine,
-        // which calls _animator.Play("Hit-Vanish"). No trigger needed.
+
 
         if (currentHealth <= 0)
         {

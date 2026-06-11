@@ -22,7 +22,6 @@ public class DeathScreen : MonoBehaviour
             Debug.LogError("[DeathScreen] Player not found in scene!");
         }
 
-        // Set up button listeners
         if (restartButton != null)
         {
             restartButton.onClick.AddListener(RestartLevel);
@@ -32,7 +31,6 @@ public class DeathScreen : MonoBehaviour
             exitButton.onClick.AddListener(ExitGameMethod);
         }
 
-        // Ensure the death screen UI is hidden on start
         if (deathScreenUI != null)
         {
             deathScreenUI.SetActive(false);

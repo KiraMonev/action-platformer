@@ -20,7 +20,7 @@ public class Boar : MonoBehaviour, IDamageable
     [Header("Detection & Attack")]
     [SerializeField] private float detectionDistance = 7.0f;
     [SerializeField] private float attackRange = 1.5f;
-    [SerializeField] private float attackPrepDuration = 0.6f; // Четкая пауза 0.6 секунд!
+    [SerializeField] private float attackPrepDuration = 0.6f;
 
     [Header("Cooldown")]
     [SerializeField] private float cooldownDuration = 1.8f;
@@ -144,7 +144,6 @@ public class Boar : MonoBehaviour, IDamageable
         float dist = Vector2.Distance(transform.position, _playerTransform.position);
         if (dist <= detectionDistance)
         {
-            // Проверяем, что игрок находится спереди (по направлению взгляда кабана)
             float dirToPlayer = Mathf.Sign(_playerTransform.position.x - transform.position.x);
             if (dirToPlayer == Mathf.Sign(_facingDir))
             {
@@ -175,13 +174,13 @@ public class Boar : MonoBehaviour, IDamageable
         _currentState = State.AttackPrep;
         _stateTimer = attackPrepDuration; // Гарантированная пауза
         _rb.linearVelocity = new Vector2(0f, _rb.linearVelocity.y);
-        SetAnimation("Idle"); // Кабан замирает перед выпадом
+        SetAnimation("Idle");
     }
 
     private void ExecuteAttack()
     {
         _currentState = State.Attacking;
-        _stateTimer = 0.4f; // Длительность финального выпада
+        _stateTimer = 0.4f;
         SetAnimation("Run");
     }
 

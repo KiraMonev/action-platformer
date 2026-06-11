@@ -80,7 +80,6 @@ public class SmallBee : MonoBehaviour, IDamageable
         _spawnPos = transform.position;
         currentHealth = maxHealth;
 
-        // Default facing direction based on scale
         _facingDir = transform.localScale.x < 0 ? 1 : -1;
 
         if (randomizeStartPhase)
@@ -112,10 +111,8 @@ public class SmallBee : MonoBehaviour, IDamageable
 
     private void FixedUpdate()
     {
-        // Don't execute behavior if dead
         if (_currentState == State.Dead) return;
 
-        // Clean-up if bee falls too low
         if (transform.position.y < -25f)
         {
             Destroy(gameObject);
@@ -151,7 +148,6 @@ public class SmallBee : MonoBehaviour, IDamageable
                 break;
 
             case State.Hit:
-                // Smoothly damp the knockback velocity
                 _rb.linearVelocity = Vector2.MoveTowards(_rb.linearVelocity, Vector2.zero, Time.fixedDeltaTime * 12f);
                 break;
         }
@@ -174,7 +170,6 @@ public class SmallBee : MonoBehaviour, IDamageable
         Vector2 origin = (Vector2)transform.position + new Vector2(_facingDir * bodyRadius, 0f);
         Vector2 direction = new Vector2(_facingDir, 0f);
 
-        // Center forward ray for wall detection
         RaycastHit2D centerHit = Physics2D.Raycast(origin, direction, obstacleCheckDistance, groundLayer);
 
         // Upper forward ray to check if we can fly over
@@ -228,7 +223,6 @@ public class SmallBee : MonoBehaviour, IDamageable
             return;
         }
 
-        // Smoothly interpolate current offset towards desired offset
         if (_obstacleYOffset < desiredOffset)
         {
             _obstacleYOffset = Mathf.MoveTowards(_obstacleYOffset, desiredOffset, Time.fixedDeltaTime * climbSpeed);
@@ -241,7 +235,6 @@ public class SmallBee : MonoBehaviour, IDamageable
 
     private void ExecutePatrol(float targetY)
     {
-        // Horizontal patrol movement
         float targetVx = _facingDir * patrolSpeed;
         float targetVy = (targetY - transform.position.y) * 4f; // Smooth floating towards target Y (offset built-in)
         _rb.linearVelocity = new Vector2(targetVx, targetVy);
@@ -310,7 +303,6 @@ public class SmallBee : MonoBehaviour, IDamageable
         Vector2 diffToBee = targetPos - (Vector2)transform.position;
         float xDist = Mathf.Abs(diffToBee.x);
 
-        // Face player horizontally
         float dirToPlayer = Mathf.Sign(diffToBee.x);
         if (dirToPlayer != _facingDir)
         {
@@ -322,7 +314,6 @@ public class SmallBee : MonoBehaviour, IDamageable
         float targetVy = (targetPos.y + _obstacleYOffset - transform.position.y) * 4f;
         _rb.linearVelocity = new Vector2(targetVx, targetVy);
 
-        // If player is close enough, stop and prepare the strike
         if (xDist <= attackRange)
         {
             StartAttackPrep();
@@ -335,7 +326,6 @@ public class SmallBee : MonoBehaviour, IDamageable
         _stateTimer = attackPrepDuration;
         _rb.linearVelocity = Vector2.zero;
 
-        // Ensure facing the player
         if (_playerTransform != null)
         {
             float dirToPlayer = Mathf.Sign(_playerTransform.position.x - transform.position.x);
@@ -353,7 +343,7 @@ public class SmallBee : MonoBehaviour, IDamageable
 
     private void ExecuteAttackPrep()
     {
-        _rb.linearVelocity = Vector2.zero; // menace/tension still pause
+        _rb.linearVelocity = Vector2.zero;
         _stateTimer -= Time.fixedDeltaTime;
         if (_stateTimer <= 0f)
         {
@@ -547,7 +537,6 @@ public class SmallBee : MonoBehaviour, IDamageable
 
         if (currentHealth > 0)
         {
-            // Re-aggro if both the bee and the player are inside the leash zone
             if (_playerTransform != null)
             {
                 Vector2 targetPos = new Vector2(_playerTransform.position.x, _playerTransform.position.y + 1.2f);
@@ -578,7 +567,6 @@ public class SmallBee : MonoBehaviour, IDamageable
 
         if (_collider != null) _collider.enabled = false;
         
-        // Pop up and fall down dead
         _rb.gravityScale = 1.2f;
         _rb.linearVelocity = Vector2.zero;
         _rb.AddForce(new Vector2(-_facingDir * 2f, 3.5f), ForceMode2D.Impulse);
@@ -588,7 +576,6 @@ public class SmallBee : MonoBehaviour, IDamageable
 
     private void OnDrawGizmos()
     {
-        // Keep the editor viewport clean when the bee is not selected.
     }
 
     private void OnDrawGizmosSelected()
@@ -614,7 +601,6 @@ public class SmallBee : MonoBehaviour, IDamageable
         Gizmos.color = new Color(0.3f, 0.5f, 1f, 0.4f);
         Gizmos.DrawWireCube(pos, new Vector3(detectionWidth, detectionHeight, 0f));
 
-        // Draw obstacle avoidance probes
         float bodyRadius = 0.4f;
         if (_collider is CircleCollider2D circle)
         {
@@ -626,12 +612,10 @@ public class SmallBee : MonoBehaviour, IDamageable
         Vector2 origin = (Vector2)transform.position + new Vector2(dir * bodyRadius, 0f);
         Vector2 direction = new Vector2(dir, 0f);
 
-        // Wall check rays
         Gizmos.color = Color.red;
         Gizmos.DrawRay(origin, direction * obstacleCheckDistance);
         Gizmos.DrawRay(origin + Vector2.up * upperRayOffset, direction * obstacleCheckDistance);
 
-        // Downward height probes
         Gizmos.color = Color.green;
         Vector2 probeOriginBelow = (Vector2)transform.position + Vector2.up * probeHeight;
         Vector2 probeOriginAhead = probeOriginBelow + new Vector2(dir * lookAheadDistance, 0f);

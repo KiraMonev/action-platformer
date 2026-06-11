@@ -114,8 +114,6 @@ public class FXManager : MonoBehaviour
         ps.Play();
     }
 
-    // --- Вспомогательные методы ---
-
     private ParticleSystem CreateFX(string name, Vector2 position, Vector2 direction)
     {
         var go = new GameObject(name);

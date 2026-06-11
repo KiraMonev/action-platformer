@@ -56,7 +56,6 @@ public class AudioManager : MonoBehaviour
 
     private void Awake()
     {
-        // Singleton pattern
         if (_instance == null)
         {
             _instance = this;
@@ -125,11 +124,9 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        // Configure Source
         freeSource.clip = sfx.clip;
         freeSource.volume = sfx.volume;
 
-        // Apply pitch with optional variation
         float targetPitch = sfx.pitch;
         if (sfx.useRandomPitch)
         {
