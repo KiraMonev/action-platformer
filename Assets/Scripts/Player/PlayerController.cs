@@ -254,6 +254,12 @@ public class PlayerController : MonoBehaviour
         {
             _isCasting = true;
             _isGroundedCast = _groundDetector.IsGrounded;
+            
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.Play(SoundType.FireballAttack);
+            }
+
             if (_animations != null)
             {
                 _animations.PlayCast();

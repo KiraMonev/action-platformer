@@ -7,7 +7,8 @@ public enum SoundType
     SwordAttack,
     Run,
     Jump,
-    Land
+    Land,
+    FireballAttack
 }
 
 [System.Serializable]

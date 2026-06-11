@@ -15708,6 +15708,14 @@ MonoBehaviour:
     pitchVariation: 0.04
     applyLowPass: 0
     lowPassCutoff: 0
+  - type: 4
+    clip: {fileID: 8300000, guid: fe9fa35a2a59c88459d7fddce13267a1, type: 3}
+    volume: 0.5
+    pitch: 0.9
+    useRandomPitch: 1
+    pitchVariation: 0.04
+    applyLowPass: 0
+    lowPassCutoff: 0
   poolSize: 10
 --- !u!4 &1702342672
 Transform:
@@ -19340,7 +19348,7 @@ MonoBehaviour:
   lookaheadSpeed: 3
   useBounds: 1
   minBounds: {x: 6.12, y: 2.9446983}
-  maxBounds: {x: 10000, y: 2.99}
+  maxBounds: {x: 75.8, y: 2.99}
 --- !u!81 &2061786846
 AudioListener:
   m_ObjectHideFlags: 0
