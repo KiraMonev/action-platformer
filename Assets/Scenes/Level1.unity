@@ -14060,7 +14060,7 @@ MonoBehaviour:
     lowPassCutoff: 0
   - type: 3
     clip: {fileID: 8300000, guid: 1247dfe9efabf724f93422a63197c35f, type: 3}
-    volume: 1
+    volume: 0.3
     pitch: 0.9
     useRandomPitch: 1
     pitchVariation: 0.04

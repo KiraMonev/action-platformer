@@ -15702,7 +15702,7 @@ MonoBehaviour:
     lowPassCutoff: 0
   - type: 3
     clip: {fileID: 8300000, guid: 1247dfe9efabf724f93422a63197c35f, type: 3}
-    volume: 1
+    volume: 0.3
     pitch: 0.9
     useRandomPitch: 1
     pitchVariation: 0.04
@@ -19177,10 +19177,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e40d6c7d183dbf34eb29ef26b273688b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FXManager
-  jumpDustPrefab: {fileID: 0}
-  landDustPrefab: {fileID: 0}
-  hitBloodPrefab: {fileID: 0}
-  hitSparksPrefab: {fileID: 0}
 --- !u!4 &1955098348
 Transform:
   m_ObjectHideFlags: 0

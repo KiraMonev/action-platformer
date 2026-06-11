@@ -117,14 +117,20 @@ public class PlayerController : MonoBehaviour
         UpdateAnimations();
     }
 
+    private float _lastLandTime;
+
     private void HandleLanding()
     {
         bool isGrounded = _groundDetector.IsGrounded;
         if (isGrounded && !_wasGrounded)
         {
-            if (AudioManager.Instance != null)
+            if (Time.time - _lastLandTime > 0.1f)
             {
-                AudioManager.Instance.Play(SoundType.Land);
+                if (AudioManager.Instance != null)
+                {
+                    AudioManager.Instance.Play(SoundType.Land);
+                }
+                _lastLandTime = Time.time;
             }
         }
         _wasGrounded = isGrounded;
